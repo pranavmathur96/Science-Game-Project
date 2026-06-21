@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Science Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/shared.css">
+<link rel="stylesheet" href="student.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">🔬 My Science Games</div>
+    <div class="topbar-right">
+      <span id="userName" class="user-name"></span>
+      <button id="logoutBtn" class="logout-btn">Log out</button>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+
+  <!-- ============ TOPIC LIST ============ -->
+  <section id="topicListView">
+    <h1 class="page-title">Pick a topic to play! 🎮</h1>
+    <div id="topicList" class="topic-grid"></div>
+    <div id="topicListEmpty" class="empty-state hidden">
+      <div class="empty-emoji">📭</div>
+      <p>No games yet! Ask your teacher to assign a topic.</p>
+    </div>
+  </section>
+
+  <!-- ============ GAME HUB (3 games for one topic) ============ -->
+  <section id="gameHubView" class="hidden">
+    <button class="back-link" id="backToTopics">← All topics</button>
+    <h1 class="page-title" id="hubTopicTitle"></h1>
+    <div class="game-picker" id="gamePicker"></div>
+    <div class="game-panel" id="gamePanel"></div>
+  </section>
+
+</main>
+
+<script src="../shared/api.js"></script>
+<script src="student.js"></script>
+</body>
+</html>

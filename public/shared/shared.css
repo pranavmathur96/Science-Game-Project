@@ -1,0 +1,46 @@
+/* shared.css — base resets + utilities used across all 3 interfaces */
+*{ box-sizing: border-box; }
+body{ margin: 0; -webkit-font-smoothing: antialiased; }
+button{ font-family: inherit; }
+input{ font-family: inherit; }
+a{ color: inherit; }
+
+.hidden{ display: none !important; }
+
+.spinner{
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(0,0,0,0.15);
+  border-top-color: currentColor;
+  display: inline-block;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin{ to{ transform: rotate(360deg); } }
+
+.toast{
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #1E3A52;
+  color: #fff;
+  padding: 12px 22px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease, transform .2s ease;
+  z-index: 1000;
+  max-width: 90vw;
+  text-align: center;
+}
+.toast.show{
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.toast.error{ background: #B3402A; }
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

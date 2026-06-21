@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Science Game Kit — Sign in</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/shared.css">
+<style>
+  :root{
+    --teal: #1B4B43; --chalk: #F7F4ED; --coral: #FF7A59; --coral-deep: #E35E3D;
+    --slate: #5B7B76; --ink: #16302C;
+  }
+  body{ font-family: 'Inter', sans-serif; background: var(--teal); min-height: 100vh; color: var(--ink); }
+  .wrap{ max-width: 420px; margin: 0 auto; padding: 60px 20px 40px; }
+  .logo{ text-align: center; margin-bottom: 28px; }
+  .logo h1{
+    font-family: 'Fraunces', serif; font-weight: 600; color: var(--chalk);
+    font-size: 28px; margin: 0;
+  }
+  .logo p{ color: #B9CCC7; font-size: 14px; margin-top: 6px; font-weight: 500; }
+
+  .card{ background: #fff; border-radius: 20px; padding: 28px; box-shadow: 0 10px 0 rgba(0,0,0,0.15); }
+
+  .role-tabs{ display: flex; gap: 6px; margin-bottom: 22px; background: var(--chalk); padding: 4px; border-radius: 12px; }
+  .role-tab{
+    flex: 1; text-align: center; padding: 10px 6px; border-radius: 9px; cursor: pointer;
+    font-weight: 700; font-size: 13px; color: var(--slate); border: none; background: none;
+  }
+  .role-tab.active{ background: var(--teal); color: #fff; }
+
+  .mode-toggle{ display: flex; justify-content: center; gap: 18px; margin-bottom: 20px; font-size: 14px; font-weight: 600; }
+  .mode-btn{ background: none; border: none; cursor: pointer; color: var(--slate); padding: 4px 2px; border-bottom: 2px solid transparent; }
+  .mode-btn.active{ color: var(--coral-deep); border-bottom-color: var(--coral); }
+
+  form{ display: flex; flex-direction: column; gap: 12px; }
+  label{ font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: -6px; }
+  input{
+    font-size: 15px; padding: 12px 14px; border-radius: 10px; border: 2px solid #E4E0D5;
+    outline: none; background: var(--chalk); width: 100%;
+  }
+  input:focus{ border-color: var(--coral); }
+
+  .submit-btn{
+    font-weight: 700; font-size: 15px; background: var(--coral); color: #fff; border: none;
+    padding: 13px; border-radius: 10px; cursor: pointer; margin-top: 6px;
+    box-shadow: 0 4px 0 var(--coral-deep); display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .submit-btn:active{ transform: translateY(3px); box-shadow: 0 1px 0 var(--coral-deep); }
+  .submit-btn:disabled{ opacity: 0.7; cursor: progress; }
+
+  .field-error{ color: #B3402A; font-size: 13px; font-weight: 600; min-height: 18px; }
+  .hint{ font-size: 12px; color: var(--slate); margin-top: -4px; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="logo">
+    <h1>🔬 Science Game Kit</h1>
+    <p>For teachers, students, and parents</p>
+  </div>
+
+  <div class="card">
+    <div class="role-tabs" id="roleTabs">
+      <button class="role-tab active" data-role="teacher" type="button">👩‍🏫 Teacher</button>
+      <button class="role-tab" data-role="student" type="button">🧒 Student</button>
+      <button class="role-tab" data-role="parent" type="button">👪 Parent</button>
+    </div>
+
+    <div class="mode-toggle">
+      <button class="mode-btn active" data-mode="login" type="button">Log in</button>
+      <button class="mode-btn" data-mode="signup" type="button">Sign up</button>
+    </div>
+
+    <form id="authForm">
+      <!-- LOGIN fields -->
+      <div data-mode-section="login">
+        <label id="identifierLabel">Email</label>
+        <input type="text" id="identifierInput" autocomplete="username" />
+      </div>
+      <div data-mode-section="login">
+        <label>Password</label>
+        <input type="password" id="loginPasswordInput" autocomplete="current-password" />
+      </div>
+
+      <!-- SIGNUP fields (teacher/parent: email; student: username + class code) -->
+      <div data-mode-section="signup">
+        <label>Your name</label>
+        <input type="text" id="nameInput" autocomplete="name" />
+      </div>
+      <div data-mode-section="signup" data-role-section="teacher parent">
+        <label>Email</label>
+        <input type="email" id="emailInput" autocomplete="email" />
+      </div>
+      <div data-mode-section="signup" data-role-section="student">
+        <label>Choose a username</label>
+        <input type="text" id="usernameInput" autocomplete="username" />
+        <div class="hint">At least 3 characters. No spaces.</div>
+      </div>
+      <div data-mode-section="signup" data-role-section="student">
+        <label>Class code</label>
+        <input type="text" id="classCodeInput" placeholder="e.g. FOX-1234" style="text-transform: uppercase;" />
+        <div class="hint">Ask your teacher for this.</div>
+      </div>
+      <div data-mode-section="signup">
+        <label>Password</label>
+        <input type="password" id="signupPasswordInput" autocomplete="new-password" />
+        <div class="hint">At least 8 characters.</div>
+      </div>
+
+      <div class="field-error" id="fieldError"></div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        <span id="submitLabel">Log in</span>
+      </button>
+    </form>
+  </div>
+</div>
+
+<script src="shared/api.js"></script>
+<script>
+  let currentRole = 'teacher';
+  let currentMode = 'login';
+
+  const roleTabs = document.querySelectorAll('.role-tab');
+  const modeBtns = document.querySelectorAll('.mode-btn');
+  const form = document.getElementById('authForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const submitLabel = document.getElementById('submitLabel');
+  const fieldError = document.getElementById('fieldError');
+  const identifierLabel = document.getElementById('identifierLabel');
+
+  // If already logged in, go straight to the right dashboard
+  if (Auth.isLoggedIn()) {
+    redirectToDashboard(Auth.getUser().role);
+  }
+
+  function redirectToDashboard(role) {
+    const map = { teacher: 'teacher/index.html', student: 'student/index.html', parent: 'parent/index.html' };
+    window.location.href = map[role];
+  }
+
+  function updateVisibility() {
+    document.querySelectorAll('[data-mode-section]').forEach(el => {
+      el.classList.toggle('hidden', el.dataset.modeSection !== currentMode);
+    });
+    document.querySelectorAll('[data-role-section]').forEach(el => {
+      const roles = el.dataset.roleSection.split(' ');
+      const showForRole = roles.includes(currentRole);
+      const showForMode = el.dataset.modeSection === currentMode;
+      el.classList.toggle('hidden', !(showForRole && showForMode));
+    });
+
+    identifierLabel.textContent = currentRole === 'student' ? 'Username' : 'Email';
+    submitLabel.textContent = currentMode === 'login' ? 'Log in' : 'Sign up';
+    fieldError.textContent = '';
+  }
+
+  roleTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      roleTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentRole = tab.dataset.role;
+      updateVisibility();
+    });
+  });
+
+  modeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      modeBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentMode = btn.dataset.mode;
+      updateVisibility();
+    });
+  });
+
+  updateVisibility();
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    fieldError.textContent = '';
+    submitBtn.disabled = true;
+    submitLabel.innerHTML = '<span class="spinner"></span>';
+
+    try {
+      let result;
+      if (currentMode === 'login') {
+        const identifier = document.getElementById('identifierInput').value.trim();
+        const password = document.getElementById('loginPasswordInput').value;
+        if (!identifier || !password) throw new Error('Please fill in both fields.');
+
+        result = await apiCall('/api/auth/login', { method: 'POST', body: { identifier, password } });
+      } else {
+        const name = document.getElementById('nameInput').value.trim();
+        const password = document.getElementById('signupPasswordInput').value;
+
+        if (currentRole === 'student') {
+          const username = document.getElementById('usernameInput').value.trim();
+          const classCode = document.getElementById('classCodeInput').value.trim();
+          result = await apiCall('/api/auth/signup/student', {
+            method: 'POST',
+            body: { username, password, name, classCode }
+          });
+        } else {
+          const email = document.getElementById('emailInput').value.trim();
+          result = await apiCall(`/api/auth/signup/${currentRole}`, {
+            method: 'POST',
+            body: { email, password, name }
+          });
+        }
+      }
+
+      Auth.setSession(result.token, result.user);
+      redirectToDashboard(result.user.role);
+    } catch (err) {
+      fieldError.textContent = err.message;
+    } finally {
+      submitBtn.disabled = false;
+      submitLabel.textContent = currentMode === 'login' ? 'Log in' : 'Sign up';
+    }
+  });
+</script>
+</body>
+</html>

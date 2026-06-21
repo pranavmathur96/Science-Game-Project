@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Dashboard — Science Game Kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/shared.css">
+<link rel="stylesheet" href="teacher.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">🔬 Science Game Kit <span class="role-badge">Teacher</span></div>
+    <div class="topbar-right">
+      <span id="userName" class="user-name"></span>
+      <button id="logoutBtn" class="logout-btn">Log out</button>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+
+  <!-- ============ CLASS LIST VIEW ============ -->
+  <section id="classListView">
+    <div class="view-header">
+      <h1>Your classes</h1>
+      <button id="newClassBtn" class="primary-btn">+ New class</button>
+    </div>
+    <div id="classList" class="class-grid"></div>
+    <div id="classListEmpty" class="empty-state hidden">
+      <p>You don't have any classes yet.</p>
+      <button id="newClassBtnEmpty" class="primary-btn">Create your first class</button>
+    </div>
+  </section>
+
+  <!-- ============ NEW CLASS MODAL ============ -->
+  <div id="newClassModal" class="modal-overlay hidden">
+    <div class="modal">
+      <h2>Create a class</h2>
+      <input type="text" id="newClassName" placeholder="e.g. 4th Grade Science — Room 12" />
+      <div class="modal-error" id="newClassError"></div>
+      <div class="modal-actions">
+        <button class="ghost-btn" id="cancelNewClass">Cancel</button>
+        <button class="primary-btn" id="confirmNewClass">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ CLASS DETAIL VIEW ============ -->
+  <section id="classDetailView" class="hidden">
+    <button class="back-link" id="backToClasses">← All classes</button>
+    <div class="view-header">
+      <div>
+        <h1 id="detailClassName"></h1>
+        <div class="class-code-pill">Class code: <strong id="detailClassCode"></strong> <button id="copyCodeBtn" class="copy-btn">copy</button></div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="topics">📚 Topics</button>
+      <button class="tab-btn" data-tab="roster">🧑‍🎓 Roster</button>
+      <button class="tab-btn" data-tab="metrics">📊 Metrics</button>
+    </div>
+
+    <!-- TOPICS TAB -->
+    <div class="tab-panel" id="panel-topics">
+      <div class="assign-topic-bar">
+        <input type="text" id="newTopicInput" placeholder="Type a topic, e.g. Photosynthesis" />
+        <button id="assignTopicBtn" class="primary-btn">
+          <span id="assignTopicLabel">Generate &amp; assign</span>
+        </button>
+      </div>
+      <div class="topic-error" id="topicError"></div>
+      <div id="topicList" class="topic-list"></div>
+    </div>
+
+    <!-- ROSTER TAB -->
+    <div class="tab-panel hidden" id="panel-roster">
+      <div id="rosterList" class="roster-list"></div>
+    </div>
+
+    <!-- METRICS TAB -->
+    <div class="tab-panel hidden" id="panel-metrics">
+      <div id="metricsContent"></div>
+    </div>
+  </section>
+
+</main>
+
+<script src="../shared/api.js"></script>
+<script src="teacher.js"></script>
+</body>
+</html>

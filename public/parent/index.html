@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parent Dashboard — Science Game Kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/shared.css">
+<link rel="stylesheet" href="parent.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">🔬 Science Game Kit <span class="role-badge">Parent</span></div>
+    <div class="topbar-right">
+      <span id="userName" class="user-name"></span>
+      <button id="logoutBtn" class="logout-btn">Log out</button>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+
+  <!-- ============ CHILD LIST ============ -->
+  <section id="childListView">
+    <div class="view-header">
+      <h1>Your children</h1>
+      <button id="linkChildBtn" class="primary-btn">+ Link a child</button>
+    </div>
+    <div id="childList" class="child-grid"></div>
+    <div id="childListEmpty" class="empty-state hidden">
+      <p>You haven't linked any children yet.</p>
+      <button id="linkChildBtnEmpty" class="primary-btn">Link your first child</button>
+    </div>
+  </section>
+
+  <!-- ============ LINK CHILD MODAL ============ -->
+  <div id="linkChildModal" class="modal-overlay hidden">
+    <div class="modal">
+      <h2>Link a child</h2>
+      <p class="modal-sub">Enter the username your child uses to log in. Ask their teacher if you're not sure.</p>
+      <input type="text" id="linkUsernameInput" placeholder="e.g. asha_p" />
+      <div class="modal-error" id="linkChildError"></div>
+      <div class="modal-actions">
+        <button class="ghost-btn" id="cancelLinkChild">Cancel</button>
+        <button class="primary-btn" id="confirmLinkChild">Link</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ CHILD PROGRESS VIEW ============ -->
+  <section id="childProgressView" class="hidden">
+    <button class="back-link" id="backToChildren">← All children</button>
+    <h1 id="progressChildName"></h1>
+
+    <div id="progressContent"></div>
+  </section>
+
+</main>
+
+<script src="../shared/api.js"></script>
+<script src="parent.js"></script>
+</body>
+</html>
