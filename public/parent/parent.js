@@ -1,5 +1,19 @@
 // public/parent/parent.js
 
+// ---- Handle token arriving via URL hash after Google OAuth ----
+(function handleOAuthHash() {
+  if (!window.location.hash) return;
+  const params = new URLSearchParams(window.location.hash.slice(1));
+  const token = params.get('token');
+  const displayName = params.get('displayName');
+  const role = params.get('role');
+  if (token && role === 'parent') {
+    Auth.setSession(token, { role, displayName: decodeURIComponent(displayName || '') });
+    history.replaceState(null, '', window.location.pathname);
+  }
+})();
+
+// ---- Guard: must be logged in as a parent ----
 if (!Auth.isLoggedIn() || Auth.getUser().role !== 'parent') {
   window.location.href = '../index.html';
 }

@@ -4,10 +4,11 @@
 -- ============ USERS (base identity for all 3 roles) ============
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  email TEXT UNIQUE,                  -- used by teacher/parent; NULL allowed for students
+  email TEXT UNIQUE,
   password_hash TEXT NOT NULL,
   role TEXT NOT NULL CHECK(role IN ('teacher', 'parent', 'student')),
   display_name TEXT NOT NULL,
+  google_id TEXT UNIQUE,
   created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 

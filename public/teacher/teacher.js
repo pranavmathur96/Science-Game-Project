@@ -1,5 +1,21 @@
 // public/teacher/teacher.js
 
+// ---- Handle token arriving via URL hash after Google OAuth ----
+// After Google login, the server redirects to /teacher/index.html#token=...
+// We read it here, store it in sessionStorage, then clean the URL.
+(function handleOAuthHash() {
+  if (!window.location.hash) return;
+  const params = new URLSearchParams(window.location.hash.slice(1));
+  const token = params.get('token');
+  const displayName = params.get('displayName');
+  const role = params.get('role');
+  if (token && role === 'teacher') {
+    Auth.setSession(token, { role, displayName: decodeURIComponent(displayName || '') });
+    // Clean the token out of the URL so it's not visible / accidentally shared
+    history.replaceState(null, '', window.location.pathname);
+  }
+})();
+
 // ---- Guard: must be logged in as a teacher ----
 if (!Auth.isLoggedIn() || Auth.getUser().role !== 'teacher') {
   window.location.href = '../index.html';
