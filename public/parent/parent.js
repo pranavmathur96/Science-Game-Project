@@ -121,8 +121,20 @@ function renderProgress(data) {
   const totalMinutes = Math.round(totalTimeSeconds / 60);
   const masteredCount = data.summary.filter(r => r.mastered).length;
   const topicsTouched = new Set(data.summary.map(r => r.topic_id)).size;
+  const overallPct = data.summary.length > 0 ? Math.round((masteredCount / data.summary.length) * 100) : 0;
+
+  // ---- Trend: compare the most recent half of attempts to the prior half ----
+  const trend = computeTrend(data.recent);
 
   let html = `
+    <div class="mastery-meter-card">
+      <div class="mastery-meter-top">
+        <div class="mastery-meter-label">Overall mastery</div>
+        <div class="mastery-meter-pct">${overallPct}%</div>
+      </div>
+      <div class="progress-bar-track"><div class="progress-bar-fill ${overallPct < 50 ? 'low' : ''}" style="width:${overallPct}%"></div></div>
+      <div class="trend-badge ${trend.className}">${trend.label}</div>
+    </div>
     <div class="summary-cards">
       <div class="summary-card"><div class="label">Topics played</div><div class="value">${topicsTouched}</div></div>
       <div class="summary-card"><div class="label">Games mastered</div><div class="value">${masteredCount} / ${data.summary.length}</div></div>
@@ -170,6 +182,34 @@ function renderProgress(data) {
   html += `</div>`;
 
   container.innerHTML = html;
+}
+
+// ---- Trend: is the child improving, steady, or needing support recently? ----
+// `recent` is ordered most-recent-first. Compare the average score ratio of
+// the newer half against the older half of that window.
+function computeTrend(recent) {
+  const withRatio = recent
+    .filter(a => a.score != null && a.max_score != null && a.max_score > 0)
+    .map(a => a.score / a.max_score);
+
+  // Small samples are noisy — with too few scored attempts, a couple of
+  // points can swing the average by double digits without meaning anything.
+  if (withRatio.length < 6) {
+    return { label: 'Not enough data yet', className: 'flat' };
+  }
+
+  const mid = Math.floor(withRatio.length / 2);
+  const newer = withRatio.slice(0, mid);
+  const older = withRatio.slice(mid);
+  const avg = arr => arr.reduce((sum, v) => sum + v, 0) / arr.length;
+  const newerAvg = avg(newer);
+  const diff = newerAvg - avg(older);
+
+  // Already scoring high recently — don't flag minor variance as "needs
+  // support" when the child is performing at a mastery level right now.
+  if (diff < -0.15 && newerAvg < 0.8) return { label: 'Needs support ↓', className: 'down' };
+  if (diff > 0.15) return { label: 'Improving ↑', className: 'up' };
+  return { label: 'Steady →', className: 'flat' };
 }
 
 // ---- Utilities ----

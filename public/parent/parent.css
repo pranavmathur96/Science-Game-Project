@@ -74,3 +74,14 @@ body{ font-family: 'Inter', sans-serif; background: var(--cream); color: var(--i
 .activity-row .activity-meta{ color: var(--slate); font-size: 13px; }
 
 .no-data-note{ font-size: 14px; color: var(--slate); font-style: italic; padding: 16px 0; }
+
+/* ---- Overall mastery meter ---- */
+.mastery-meter-card{ background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 3px 0 #EDE0E8; margin-top: 20px; }
+.mastery-meter-top{ display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+.mastery-meter-label{ font-family: 'Lora', serif; font-size: 16px; color: var(--plum); font-weight: 600; }
+.mastery-meter-pct{ font-family: 'Lora', serif; font-size: 24px; color: var(--plum); font-weight: 600; }
+
+.trend-badge{ display: inline-block; margin-top: 12px; font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 999px; }
+.trend-badge.up{ background: #E4F1E6; color: var(--green-deep); }
+.trend-badge.down{ background: #FBEAE5; color: var(--rose-deep); }
+.trend-badge.flat{ background: #F0E8ED; color: var(--slate); }

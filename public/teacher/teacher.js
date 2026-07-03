@@ -239,6 +239,9 @@ async function loadMetrics() {
       return;
     }
 
+    const studentSummaryMap = {};
+    (data.studentSummary || []).forEach(s => { studentSummaryMap[s.student_id] = s; });
+
     // Group attempts by student
     const byStudent = {};
     data.attempts.forEach(a => {
@@ -247,12 +250,55 @@ async function loadMetrics() {
     });
 
     let html = '';
-    Object.values(byStudent).forEach(student => {
-      html += `<div class="section-label">${escapeHtml(student.name)}</div>`;
+
+    // ---- Class overview: per-topic mastery rate across the whole class ----
+    if (data.topicSummary && data.topicSummary.length > 0) {
+      html += `<div class="section-label">Class overview</div><div class="topic-mastery-grid">`;
+      data.topicSummary.forEach(t => {
+        const pct = t.class_size > 0 ? Math.round((t.mastered_count / t.class_size) * 100) : 0;
+        html += `
+          <div class="topic-mastery-card">
+            <div class="topic-mastery-title">${escapeHtml(t.topic_title)}</div>
+            <div class="progress-bar-track"><div class="progress-bar-fill ${pct < 50 ? 'low' : ''}" style="width:${pct}%"></div></div>
+            <div class="topic-mastery-caption">${t.mastered_count}/${t.class_size} students mastered (${pct}%)</div>
+          </div>
+        `;
+      });
+      html += `</div>`;
+    }
+
+    // ---- Per-student detail, ordered so students needing attention surface first ----
+    const orderedStudents = [...data.roster].sort((a, b) => {
+      const aFlag = studentSummaryMap[a.id]?.needs_attention ? 0 : 1;
+      const bFlag = studentSummaryMap[b.id]?.needs_attention ? 0 : 1;
+      return aFlag - bFlag;
+    });
+
+    orderedStudents.forEach(student => {
+      const summary = studentSummaryMap[student.id];
+      const rows = byStudent[student.id]?.rows || [];
+
+      const masteryPct = summary && summary.mastery_rate != null ? Math.round(summary.mastery_rate * 100) + '% mastered' : '';
+      const attentionBadge = summary && summary.needs_attention ? `<span class="attention-badge">⚠ Needs attention</span>` : '';
+
+      html += `<div class="section-label student-header">
+        <span>${escapeHtml(student.display_name)}</span>
+        <span class="student-header-meta">${masteryPct}${attentionBadge}</span>
+      </div>`;
+
+      if (summary && summary.stuck_topics.length > 0) {
+        html += `<div class="stuck-topics-note">Stuck (3+ tries, not yet mastered): ${summary.stuck_topics.map(escapeHtml).join(', ')}</div>`;
+      }
+
+      if (rows.length === 0) {
+        html += `<div class="no-attempts-note">No games played yet.</div>`;
+        return;
+      }
+
       html += `<table class="metrics-table"><thead><tr>
         <th>Topic</th><th>Game</th><th>Best score</th><th>Mastered</th><th>Time spent</th><th>Attempts</th>
       </tr></thead><tbody>`;
-      student.rows.forEach(r => {
+      rows.forEach(r => {
         const pct = r.best_ratio != null ? Math.round(r.best_ratio * 100) + '%' : '—';
         const masteryClass = r.mastered ? 'yes' : 'no';
         const masteryLabel = r.mastered ? 'Yes' : 'Not yet';

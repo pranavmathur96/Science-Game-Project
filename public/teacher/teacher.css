@@ -101,3 +101,18 @@ body{ font-family: 'Inter', sans-serif; background: var(--chalk); color: var(--i
 .mastery-pill.none{ background: #E4E0D5; color: var(--slate); }
 .section-label{ font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--slate); margin: 20px 0 8px; }
 .no-attempts-note{ font-size: 13px; color: var(--slate); font-style: italic; padding: 8px 0; }
+
+/* ---- Class overview: per-topic mastery ---- */
+.topic-mastery-grid{ display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin-bottom: 8px; }
+.topic-mastery-card{ background: #fff; border-radius: 14px; padding: 14px 16px; box-shadow: 0 3px 0 #E4E0D5; }
+.topic-mastery-title{ font-weight: 700; font-size: 14px; color: var(--teal); margin-bottom: 8px; }
+.topic-mastery-caption{ font-size: 12px; color: var(--slate); font-weight: 600; margin-top: 6px; }
+.progress-bar-track{ height: 8px; background: #EFEEE8; border-radius: 999px; overflow: hidden; }
+.progress-bar-fill{ height: 100%; background: var(--green); border-radius: 999px; }
+.progress-bar-fill.low{ background: var(--coral); }
+
+/* ---- Per-student attention flags ---- */
+.student-header{ display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.student-header-meta{ display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 12px; color: var(--slate); text-transform: none; letter-spacing: 0; }
+.attention-badge{ background: #FFF0EA; color: var(--coral-deep); font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 999px; }
+.stuck-topics-note{ font-size: 12px; color: var(--coral-deep); font-weight: 600; margin-bottom: 8px; }

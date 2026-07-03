@@ -208,7 +208,79 @@ router.get('/classes/:id/metrics', (req, res) => {
 
     const topics = db.prepare(`SELECT id, title FROM topics WHERE class_id = ? AND status = 'active'`).all(klass.id);
 
-    res.json({ roster, topics, attempts: rows });
+    // ---- Per-student overall summary: mastery rate + struggle detection ----
+    // A student "needs attention" if their overall mastery rate across attempted
+    // games is below 50%, or they're stuck (3+ attempts, still not mastered) on
+    // any topic/game combo.
+    const studentMap = new Map();
+    roster.forEach(s => {
+      studentMap.set(s.id, {
+        student_id: s.id,
+        student_name: s.display_name,
+        topics_attempted: new Set(),
+        rows_total: 0,
+        rows_mastered: 0,
+        ratio_sum: 0,
+        ratio_count: 0,
+        stuck_topics: new Set()
+      });
+    });
+    rows.forEach(r => {
+      const s = studentMap.get(r.student_id);
+      if (!s) return;
+      s.topics_attempted.add(r.topic_id);
+      s.rows_total += 1;
+      if (r.mastered) s.rows_mastered += 1;
+      if (r.best_ratio != null) { s.ratio_sum += r.best_ratio; s.ratio_count += 1; }
+      if (!r.mastered && r.attempt_count >= 3) s.stuck_topics.add(r.topic_title);
+    });
+
+    const studentSummary = Array.from(studentMap.values()).map(s => {
+      const masteryRate = s.rows_total > 0 ? s.rows_mastered / s.rows_total : null;
+      const avgScore = s.ratio_count > 0 ? s.ratio_sum / s.ratio_count : null;
+      const stuckTopics = Array.from(s.stuck_topics);
+      const needsAttention = s.rows_total > 0 && ((masteryRate != null && masteryRate < 0.5) || stuckTopics.length > 0);
+      return {
+        student_id: s.student_id,
+        student_name: s.student_name,
+        topics_attempted: s.topics_attempted.size,
+        mastery_rate: masteryRate,
+        avg_score: avgScore,
+        stuck_topics: stuckTopics,
+        needs_attention: needsAttention,
+        has_activity: s.rows_total > 0
+      };
+    });
+
+    // ---- Class-wide per-topic summary: what fraction of the class has mastered each topic ----
+    const topicMap = new Map();
+    topics.forEach(t => topicMap.set(t.id, { topic_id: t.id, topic_title: t.title, students: new Map() }));
+    rows.forEach(r => {
+      const t = topicMap.get(r.topic_id);
+      if (!t) return;
+      const existing = t.students.get(r.student_id) || { mastered: false, ratioSum: 0, ratioCount: 0 };
+      if (r.mastered) existing.mastered = true;
+      if (r.best_ratio != null) { existing.ratioSum += r.best_ratio; existing.ratioCount += 1; }
+      t.students.set(r.student_id, existing);
+    });
+    const topicSummary = Array.from(topicMap.values()).map(t => {
+      let masteredCount = 0, ratioSum = 0, ratioCount = 0;
+      t.students.forEach(v => {
+        if (v.mastered) masteredCount += 1;
+        ratioSum += v.ratioSum;
+        ratioCount += v.ratioCount;
+      });
+      return {
+        topic_id: t.topic_id,
+        topic_title: t.topic_title,
+        attempted_count: t.students.size,
+        mastered_count: masteredCount,
+        class_size: roster.length,
+        avg_score: ratioCount > 0 ? ratioSum / ratioCount : null
+      };
+    });
+
+    res.json({ roster, topics, attempts: rows, studentSummary, topicSummary });
   } catch (err) {
     console.error('Class metrics error:', err);
     res.status(500).json({ error: 'Something went wrong loading metrics.' });
