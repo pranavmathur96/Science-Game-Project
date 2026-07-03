@@ -2,6 +2,8 @@
 const express = require('express');
 const db = require('../db/connection');
 const { requireAuth, requireRole } = require('../middleware/auth');
+const { DISPLAY_COUNTS, selectWindow, selectSortWindow, computeMode } = require('../services/contentRotation');
+const { checkAndAwardBadges, getBadgeShelf } = require('../services/badges');
 
 const router = express.Router();
 
@@ -22,7 +24,7 @@ router.get('/topics', (req, res) => {
     if (!classId) return res.status(404).json({ error: 'No class found for this account.' });
 
     const topics = db.prepare(`
-      SELECT id, title, created_at FROM topics
+      SELECT id, title, class_id, created_at FROM topics
       WHERE class_id = ? AND status = 'active'
       ORDER BY created_at DESC
     `).all(classId);
@@ -62,11 +64,39 @@ router.get('/topics/:id/kit', (req, res) => {
 
     if (!topic) return res.status(404).json({ error: 'Topic not found.' });
 
-    res.json({
-      id: topic.id,
-      title: topic.title,
-      gameKit: JSON.parse(topic.game_kit_json)
-    });
+    const fullKit = JSON.parse(topic.game_kit_json);
+
+    // How many times has this student already played each game type on this
+    // topic? Drives which rotating slice + presentation mode they see next —
+    // computed server-side from trusted attempt history, never client input.
+    const playCounts = db.prepare(`
+      SELECT game_type, COUNT(*) AS c FROM attempts
+      WHERE student_user_id = ? AND topic_id = ?
+      GROUP BY game_type
+    `).all(req.user.userId, topic.id);
+    const playIndex = { quiz: 0, sort: 0, match: 0 };
+    playCounts.forEach(row => { playIndex[row.game_type] = row.c; });
+
+    const seedBase = `${req.user.userId}-${topic.id}`;
+
+    const quizQuestions = fullKit.quiz?.questions || [];
+    const sortItems = fullKit.sort?.items || [];
+    const matchPairs = fullKit.match?.pairs || [];
+
+    const gameKit = {
+      topic: fullKit.topic,
+      quiz: { ...fullKit.quiz, questions: selectWindow(quizQuestions, `${seedBase}-quiz`, DISPLAY_COUNTS.quiz, playIndex.quiz) },
+      sort: { ...fullKit.sort, items: selectSortWindow(fullKit.sort?.categories || [], sortItems, `${seedBase}-sort`, playIndex.sort) },
+      match: { ...fullKit.match, pairs: selectWindow(matchPairs, `${seedBase}-match`, DISPLAY_COUNTS.match, playIndex.match) },
+    };
+
+    const modes = {
+      quiz: computeMode(playIndex.quiz, 'quiz', quizQuestions.length),
+      sort: computeMode(playIndex.sort, 'sort', sortItems.length),
+      match: computeMode(playIndex.match, 'match', matchPairs.length),
+    };
+
+    res.json({ id: topic.id, title: topic.title, gameKit, modes });
   } catch (err) {
     console.error('Get topic kit error:', err);
     res.status(500).json({ error: 'Something went wrong loading this topic.' });
@@ -116,10 +146,32 @@ router.post('/attempts', (req, res) => {
       mastered
     );
 
-    res.status(201).json({ id: result.lastInsertRowid, mastered: !!mastered });
+    // Badge-checking must never fail the attempt itself — a bug in the
+    // rule engine shouldn't cost a kid their saved progress.
+    let newBadges = [];
+    try {
+      newBadges = checkAndAwardBadges(req.user.userId);
+    } catch (badgeErr) {
+      console.error('Badge check error:', badgeErr);
+    }
+
+    res.status(201).json({ id: result.lastInsertRowid, mastered: !!mastered, newBadges });
   } catch (err) {
     console.error('Record attempt error:', err);
     res.status(500).json({ error: 'Something went wrong saving your progress.' });
+  }
+});
+
+// ============================================================
+// MY BADGES (earned + locked/aspirational, for the "My Badges" view)
+// ============================================================
+router.get('/badges', (req, res) => {
+  try {
+    const shelf = getBadgeShelf(req.user.userId);
+    res.json(shelf);
+  } catch (err) {
+    console.error('Get badge shelf error:', err);
+    res.status(500).json({ error: 'Something went wrong loading your badges.' });
   }
 });
 

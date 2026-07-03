@@ -41,9 +41,10 @@ Generate content for exactly 3 games. Respond with ONLY valid JSON, no preamble,
 }
 
 Requirements:
-- quiz: exactly 5 questions, each with exactly 4 options
-- sort: exactly 3-4 categories, and 8-10 items total spread across them
-- match: exactly 6 term/definition pairs
+- quiz: approximately 20 questions (a large, varied bank — no two should be near-duplicates of each other), each with exactly 4 options
+- sort: exactly 3-4 categories, and approximately 24 items total spread across them (roughly evenly, so every category has a healthy pool)
+- match: approximately 18 term/definition pairs, all distinct terms
+- This is a large content bank a student will draw smaller rotating subsets from across many replays, so breadth and variety across the whole set matters more than any single item
 - Language must be simple, concrete, and appropriate for 9-10 year olds
 - Be scientifically accurate
 - Make it engaging and age-appropriate, not dry or textbook-like
@@ -93,7 +94,7 @@ async function generateGameKit(topic) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 4000,
+        max_tokens: 8000,
         messages: [{ role: 'user', content: buildPrompt(topic) }],
       }),
     });

@@ -12,6 +12,8 @@ body{ font-family: 'Nunito', sans-serif; background: linear-gradient(180deg, var
 .topbar-right{ display: flex; align-items: center; gap: 14px; }
 .user-name{ color: #B9CCD8; font-weight: 700; font-size: 14px; }
 .logout-btn{ background: none; border: 1.5px solid rgba(255,255,255,0.3); color: #fff; padding: 6px 14px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; }
+.badges-nav-btn{ background: none; border: 1.5px solid rgba(255,255,255,0.3); color: #fff; padding: 6px 14px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; font-family: 'Nunito', sans-serif; }
+.badges-nav-btn:hover{ background: rgba(255,255,255,0.1); }
 
 .page{ max-width: 900px; margin: 0 auto; padding: 28px 20px 80px; }
 .page-title{ font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: clamp(22px, 4vw, 30px); color: var(--ink); margin: 0 0 20px; text-align: center; }
@@ -35,6 +37,16 @@ body{ font-family: 'Nunito', sans-serif; background: linear-gradient(180deg, var
 .empty-state{ text-align: center; padding: 60px 20px; color: var(--ink); font-weight: 700; }
 .empty-emoji{ font-size: 50px; margin-bottom: 10px; }
 
+/* ---- Featured challenge banner ---- */
+.featured-banner{
+  background: linear-gradient(120deg, var(--sun) 0%, var(--coral) 100%); border-radius: 20px;
+  padding: 18px 22px; margin-bottom: 18px; cursor: pointer; box-shadow: 0 5px 0 rgba(30,58,82,0.2);
+  transition: transform .12s ease;
+}
+.featured-banner:hover{ transform: translateY(-2px) scale(1.01); }
+.featured-label{ font-size: 12px; font-weight: 800; color: #5C3A00; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.featured-title{ font-family: 'Baloo 2', sans-serif; font-size: 20px; font-weight: 800; color: #3A2200; }
+
 /* ---- Game picker (within a topic) ---- */
 .game-picker{ display: flex; gap: 12px; justify-content: center; margin-bottom: 24px; flex-wrap: wrap; }
 .game-pick-btn{
@@ -51,8 +63,18 @@ body{ font-family: 'Nunito', sans-serif; background: linear-gradient(180deg, var
 .game-card{ background: #fff; border-radius: 22px; padding: 26px; box-shadow: 0 6px 0 var(--card-shadow); }
 .game-card h2{ font-family: 'Baloo 2', sans-serif; color: var(--ink); margin: 0 0 18px; font-size: 22px; }
 
+/* ---- Mode banner (shared across quiz/sort/match variants) ---- */
+.mode-banner{
+  display: inline-block; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 13px;
+  background: #FFF0EA; color: var(--coral); padding: 5px 14px; border-radius: 999px; margin-bottom: 14px;
+}
+
 /* ---- Quiz ---- */
-.quiz-progress{ font-size: 13px; font-weight: 800; color: #6B8A9E; margin-bottom: 14px; }
+.quiz-progress-row{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
+.quiz-progress{ font-size: 13px; font-weight: 800; color: #6B8A9E; }
+.lives-row{ font-size: 18px; letter-spacing: 2px; }
+.timer-bar-track{ height: 8px; background: #E4EFF7; border-radius: 999px; overflow: hidden; margin-bottom: 16px; }
+.timer-bar-fill{ height: 100%; width: 100%; background: var(--coral); border-radius: 999px; transition: width 1s linear; }
 .quiz-question{ font-size: 18px; font-weight: 800; margin-bottom: 16px; line-height: 1.4; }
 .quiz-options{ display: grid; gap: 10px; }
 .quiz-option{ text-align: left; font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 700; background: #F0F9FF; border: 2.5px solid #DCEFFA; border-radius: 14px; padding: 14px 16px; cursor: pointer; }
@@ -93,3 +115,43 @@ body{ font-family: 'Nunito', sans-serif; background: linear-gradient(180deg, var
 .match-status{ margin-top: 16px; font-size: 14px; font-weight: 800; color: #6B8A9E; }
 
 .replay-btn{ margin-top: 18px; font-family: 'Baloo 2', sans-serif; font-weight: 700; background: var(--coral); color: #fff; border: none; padding: 11px 22px; border-radius: 12px; cursor: pointer; }
+.replay-btn.hidden{ display: none; }
+
+/* ---- Memory Flip (match variant) ---- */
+.memory-grid{ display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; perspective: 800px; }
+.memory-card{ background: none; border: none; padding: 0; cursor: pointer; height: 80px; }
+.memory-card-inner{ position: relative; width: 100%; height: 100%; transition: transform 0.4s; transform-style: preserve-3d; }
+.memory-card.flipped .memory-card-inner, .memory-card.matched .memory-card-inner{ transform: rotateY(180deg); }
+.memory-card-back, .memory-card-front{
+  position: absolute; inset: 0; backface-visibility: hidden; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  padding: 6px; font-size: 12px; font-weight: 700; font-family: 'Nunito', sans-serif;
+}
+.memory-card-back{ background: var(--sky); color: #fff; font-family: 'Baloo 2', sans-serif; font-size: 22px; }
+.memory-card-front{ background: #F0F9FF; border: 2px solid #DCEFFA; transform: rotateY(180deg); color: var(--ink); }
+.memory-card.matched .memory-card-front{ background: #DCEFE3; border-color: var(--grass); color: #2C5C26; }
+
+/* ---- My Badges ---- */
+.section-label{ font-family: 'Baloo 2', sans-serif; font-weight: 700; font-size: 16px; color: var(--ink); margin: 22px 0 12px; }
+.no-data-note{ font-size: 14px; color: #6B8A9E; font-style: italic; padding: 16px 0; }
+.badge-grid{ display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+.badge-card{ background: #fff; border-radius: 18px; padding: 18px; text-align: center; box-shadow: 0 4px 0 var(--card-shadow); }
+.badge-card.locked{ opacity: 0.5; filter: grayscale(1); box-shadow: 0 4px 0 #E4E0D5; }
+.badge-emoji{ font-size: 34px; margin-bottom: 8px; }
+.badge-label{ font-family: 'Baloo 2', sans-serif; font-weight: 700; font-size: 14px; color: var(--ink); margin-bottom: 6px; }
+.badge-desc{ font-size: 12px; color: #6B8A9E; font-weight: 600; line-height: 1.4; }
+
+/* ---- Badge celebration popup ---- */
+.badge-celebration{
+  position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-20px);
+  z-index: 200; opacity: 0; transition: opacity .3s ease, transform .3s ease; pointer-events: none;
+}
+.badge-celebration.hidden{ display: none; }
+.badge-celebration.show{ opacity: 1; transform: translateX(-50%) translateY(0); }
+.celebration-badge{
+  display: flex; align-items: center; gap: 12px; background: #fff; border-radius: 16px; padding: 14px 20px;
+  box-shadow: 0 6px 20px rgba(30,58,82,0.25); margin-bottom: 10px; border: 2px solid var(--sun);
+}
+.celebration-emoji{ font-size: 30px; }
+.celebration-title{ font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--coral); letter-spacing: 0.5px; }
+.celebration-label{ font-family: 'Baloo 2', sans-serif; font-weight: 700; font-size: 15px; color: var(--ink); }

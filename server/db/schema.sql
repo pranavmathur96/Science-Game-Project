@@ -61,6 +61,23 @@ CREATE TABLE IF NOT EXISTS attempts (
   played_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
+-- ============ EARNED BADGES (micro-credentials) ============
+-- Unique on (student_user_id, badge_key) only — NOT topic_id. SQLite treats
+-- NULL as distinct in unique constraints, so a nullable topic_id here would
+-- let non-topic badges (streaks, milestones) insert duplicate rows on every
+-- check. Per-topic badges instead bake the topic into the key itself
+-- (e.g. "topic-mastery-42"); topic_id is stored only for display/joins.
+CREATE TABLE IF NOT EXISTS earned_badges (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  student_user_id INTEGER NOT NULL REFERENCES users(id),
+  badge_key TEXT NOT NULL,
+  topic_id INTEGER REFERENCES topics(id),
+  earned_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(student_user_id, badge_key)
+);
+
 CREATE INDEX IF NOT EXISTS idx_attempts_student ON attempts(student_user_id);
 CREATE INDEX IF NOT EXISTS idx_attempts_topic ON attempts(topic_id);
+CREATE INDEX IF NOT EXISTS idx_attempts_student_topic_type ON attempts(student_user_id, topic_id, game_type);
 CREATE INDEX IF NOT EXISTS idx_student_profiles_class ON student_profiles(class_id);
+CREATE INDEX IF NOT EXISTS idx_earned_badges_student ON earned_badges(student_user_id);

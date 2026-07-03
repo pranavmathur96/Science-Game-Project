@@ -15,6 +15,7 @@
   <div class="topbar-inner">
     <div class="brand">🔬 My Science Games</div>
     <div class="topbar-right">
+      <button id="badgesNavBtn" class="badges-nav-btn">🏅 My Badges</button>
       <span id="userName" class="user-name"></span>
       <button id="logoutBtn" class="logout-btn">Log out</button>
     </div>
@@ -23,25 +24,35 @@
 
 <main class="page">
 
-  <!-- ============ TOPIC LIST ============ -->
+  <!-- ============ CHALLENGE LIST ============ -->
   <section id="topicListView">
-    <h1 class="page-title">Pick a topic to play! 🎮</h1>
+    <h1 class="page-title">Your Challenges 🎮</h1>
+    <div id="featuredChallengeBanner"></div>
     <div id="topicList" class="topic-grid"></div>
     <div id="topicListEmpty" class="empty-state hidden">
       <div class="empty-emoji">📭</div>
-      <p>No games yet! Ask your teacher to assign a topic.</p>
+      <p>No challenges yet! Ask your teacher to assign a topic.</p>
     </div>
   </section>
 
-  <!-- ============ GAME HUB (3 games for one topic) ============ -->
+  <!-- ============ GAME HUB (3 games for one challenge) ============ -->
   <section id="gameHubView" class="hidden">
-    <button class="back-link" id="backToTopics">← All topics</button>
+    <button class="back-link" id="backToTopics">← All challenges</button>
     <h1 class="page-title" id="hubTopicTitle"></h1>
     <div class="game-picker" id="gamePicker"></div>
     <div class="game-panel" id="gamePanel"></div>
   </section>
 
+  <!-- ============ MY BADGES ============ -->
+  <section id="badgeShelfView" class="hidden">
+    <button class="back-link" id="backToTopicsFromBadges">← All challenges</button>
+    <h1 class="page-title">My Badges 🏅</h1>
+    <div id="badgeShelfContent"></div>
+  </section>
+
 </main>
+
+<div id="badgeCelebration" class="badge-celebration hidden"></div>
 
 <script src="../shared/api.js"></script>
 <script src="student.js"></script>
