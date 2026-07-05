@@ -9,36 +9,41 @@
 <link rel="stylesheet" href="shared/shared.css">
 <style>
   :root{
-    --teal: #1B4B43; --chalk: #F7F4ED; --coral: #FF7A59; --coral-deep: #E35E3D;
-    --slate: #5B7B76; --ink: #16302C;
+    /* Shared blue → white theme (matches all three dashboards) */
+    --blue-900: #0C2D6B; --blue-800: #143C86; --blue-700: #1D4ED8;
+    --blue-500: #3B82F6; --blue-400: #38BDF8; --blue-200: #C7E4FF;
+    --blue-100: #E4F1FF; --blue-50: #F5FAFF;
+    --muted: #5A7BA8; --border: #DCEAFB; --ink: #0C2D6B;
   }
-  body{ font-family: 'Inter', sans-serif; background: var(--teal); min-height: 100vh; color: var(--ink); }
+  body{ font-family: 'Inter', sans-serif; background: linear-gradient(160deg, #0C2D6B 0%, #143C86 55%, #1D4ED8 100%); background-attachment: fixed; min-height: 100vh; color: var(--ink); }
   .wrap{ max-width: 420px; margin: 0 auto; padding: 60px 20px 40px; }
   .logo{ text-align: center; margin-bottom: 28px; }
-  .logo h1{ font-family: 'Fraunces', serif; font-weight: 600; color: var(--chalk); font-size: 28px; margin: 0; }
-  .logo p{ color: #B9CCC7; font-size: 14px; margin-top: 6px; font-weight: 500; }
+  .logo h1{ font-family: 'Fraunces', serif; font-weight: 600; color: #fff; font-size: 28px; margin: 0; }
+  .logo p{ color: #BAD4FF; font-size: 14px; margin-top: 6px; font-weight: 500; }
 
-  .card{ background: #fff; border-radius: 20px; padding: 28px; box-shadow: 0 10px 0 rgba(0,0,0,0.15); }
+  .card{ background: #fff; border-radius: 20px; padding: 28px; box-shadow: 0 22px 55px rgba(6,24,66,0.45); }
 
-  .role-tabs{ display: flex; gap: 6px; margin-bottom: 22px; background: var(--chalk); padding: 4px; border-radius: 12px; }
-  .role-tab{ flex: 1; text-align: center; padding: 10px 6px; border-radius: 9px; cursor: pointer; font-weight: 700; font-size: 13px; color: var(--slate); border: none; background: none; }
-  .role-tab.active{ background: var(--teal); color: #fff; }
+  .role-tabs{ display: flex; gap: 6px; margin-bottom: 22px; background: var(--blue-50); padding: 4px; border-radius: 12px; }
+  .role-tab{ flex: 1; text-align: center; padding: 10px 6px; border-radius: 9px; cursor: pointer; font-weight: 700; font-size: 13px; color: var(--muted); border: none; background: none; }
+  .role-tab.active{ background: linear-gradient(135deg, var(--blue-500), var(--blue-700)); color: #fff; }
 
   .mode-toggle{ display: flex; justify-content: center; gap: 18px; margin-bottom: 20px; font-size: 14px; font-weight: 600; }
-  .mode-btn{ background: none; border: none; cursor: pointer; color: var(--slate); padding: 4px 2px; border-bottom: 2px solid transparent; }
-  .mode-btn.active{ color: var(--coral-deep); border-bottom-color: var(--coral); }
+  .mode-btn{ background: none; border: none; cursor: pointer; color: var(--muted); padding: 4px 2px; border-bottom: 2px solid transparent; }
+  .mode-btn.active{ color: var(--blue-700); border-bottom-color: var(--blue-400); }
 
   form{ display: flex; flex-direction: column; gap: 12px; }
-  label{ font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: -6px; }
-  input{ font-size: 15px; padding: 12px 14px; border-radius: 10px; border: 2px solid #E4E0D5; outline: none; background: var(--chalk); width: 100%; }
-  input:focus{ border-color: var(--coral); }
+  label{ font-size: 13px; font-weight: 700; color: var(--blue-900); margin-bottom: -6px; }
+  input{ font-size: 15px; padding: 12px 14px; border-radius: 10px; border: 2px solid var(--border); outline: none; background: var(--blue-50); width: 100%; }
+  input:focus{ border-color: var(--blue-400); }
 
   .submit-btn{
-    font-weight: 700; font-size: 15px; background: var(--coral); color: #fff; border: none;
+    font-weight: 700; font-size: 15px; background: linear-gradient(135deg, var(--blue-500), var(--blue-700)); color: #fff; border: none;
     padding: 13px; border-radius: 10px; cursor: pointer; margin-top: 6px;
-    box-shadow: 0 4px 0 var(--coral-deep); display: flex; align-items: center; justify-content: center; gap: 8px;
+    box-shadow: 0 4px 14px rgba(29,78,216,0.4); display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: transform .1s ease, box-shadow .1s ease;
   }
-  .submit-btn:active{ transform: translateY(3px); box-shadow: 0 1px 0 var(--coral-deep); }
+  .submit-btn:hover{ box-shadow: 0 6px 18px rgba(29,78,216,0.48); }
+  .submit-btn:active{ transform: translateY(1px); box-shadow: 0 2px 8px rgba(29,78,216,0.4); }
   .submit-btn:disabled{ opacity: 0.7; cursor: progress; }
 
   /* Google button — styled to Google's own brand guidelines */
@@ -53,15 +58,15 @@
 
   /* Divider between Google button and email form */
   .divider{ display: flex; align-items: center; gap: 10px; margin: 14px 0 6px; }
-  .divider hr{ flex: 1; border: none; border-top: 1.5px solid #E4E0D5; }
-  .divider span{ font-size: 12px; font-weight: 700; color: var(--slate); white-space: nowrap; }
+  .divider hr{ flex: 1; border: none; border-top: 1.5px solid var(--border); }
+  .divider span{ font-size: 12px; font-weight: 700; color: var(--muted); white-space: nowrap; }
 
   /* Only show Google button for teacher/parent, not student */
   .google-section{ display: block; }
   .google-section.hidden{ display: none; }
 
   .field-error{ color: #B3402A; font-size: 13px; font-weight: 600; min-height: 18px; }
-  .hint{ font-size: 12px; color: var(--slate); margin-top: -4px; }
+  .hint{ font-size: 12px; color: var(--muted); margin-top: -4px; }
 </style>
 </head>
 <body>
